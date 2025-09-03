@@ -18,7 +18,21 @@ const pool = new Pool({
   ssl: process.env.DATABASE_URL
     ? { rejectUnauthorized: false }                 // needed for cloud DB
     : false,
+
 });
+
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS todos (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      completed BOOLEAN DEFAULT false
+    );
+  `);
+  console.log("✅ Todos table ensured");
+}
+
+initDB().catch(err => console.error(err));
 
 // Test DB connection once
 pool.connect()
